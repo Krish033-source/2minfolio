@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<title>2minfolio — Resume to portfolio website</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4efe6;--ink:#1d1a16;--mu:#6b645a;--cd:#fbf8f2;--bd:#ddd5c6;--ac:#e8590c;--ok:#2f9e44}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:Fraunces,serif;font-weight:600;letter-spacing:-.02em;margin:0}.mono{font-family:'JetBrains Mono',monospace}[hidden]{display:none!important}
+button,input,textarea{font:inherit;color:inherit}a{color:var(--ac)}
+header.top{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--bd);position:sticky;top:0;background:#f4efe6e6;backdrop-filter:blur(10px);z-index:20}
+.logo{font:600 21px Fraunces,serif;display:flex;gap:9px;align-items:center}.logo img{width:30px;height:30px;border-radius:8px;box-shadow:0 2px 8px #7a4a2133}
+@keyframes pl{50%{box-shadow:0 0 0 9px #e8590c00}}
+.btn{display:inline-flex;gap:8px;align-items:center;padding:11px 20px;border-radius:999px;border:1px solid var(--ink);background:var(--ink);color:#fff;cursor:pointer;text-decoration:none;font-weight:500;transition:.2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px #0002}.btn.ac{background:var(--ac);border-color:var(--ac)}.btn.o{background:transparent;color:var(--ink)}.btn:disabled{opacity:.5;pointer-events:none}.btn.sm{padding:7px 14px;font-size:13px}
+.pill{display:inline-block;padding:5px 13px;border:1px solid var(--bd);border-radius:999px;font:12px 'JetBrains Mono',monospace;color:var(--mu);background:var(--cd)}
+.user{display:flex;gap:10px;align-items:center;font-size:14px}.user img{width:30px;height:30px;border-radius:50%}
+/* landing */
+.land{max-width:960px;margin:0 auto;padding:80px 24px;text-align:center}.land h1{font-size:clamp(38px,6.5vw,68px);line-height:1.05;margin:22px 0}.land h1 em{color:var(--ac);font-style:normal}
+.land p{color:var(--mu);font-size:18px;max-width:600px;margin:0 auto 30px}.steps{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-top:70px;text-align:left}
+.card{background:var(--cd);border:1px solid var(--bd);border-radius:18px;padding:20px}.steps .card b{font:500 12px 'JetBrains Mono',monospace;color:var(--ac)}.steps h3{font-size:18px;margin:8px 0 4px}.steps p{font-size:14px;margin:0}
+/* workspace */
+.ws{display:grid;grid-template-columns:minmax(380px,520px) 1fr;height:calc(100vh - 62px)}
+.side{border-right:1px solid var(--bd);display:flex;flex-direction:column;min-height:0}
+.tabs{display:flex;gap:4px;padding:12px 14px;border-bottom:1px solid var(--bd);overflow-x:auto}
+.tabs button{border:0;background:none;padding:8px 13px;border-radius:999px;cursor:pointer;color:var(--mu);white-space:nowrap;font-weight:500;transition:.2s}.tabs button b{font:500 11px 'JetBrains Mono',monospace;margin-right:6px}
+.tabs button.on{background:var(--ink);color:#fff}.tabs button:not(.on):hover{background:#0000000a}
+.panels{flex:1;overflow:auto;padding:20px 18px 40px}.panel{display:none;animation:in .35s ease}.panel.on{display:block}@keyframes in{from{opacity:0;transform:translateY(8px)}}
+.panel h2{font-size:26px;margin-bottom:4px}.sub{color:var(--mu);margin:0 0 18px}
+.tabs{scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}.tabs button{padding:8px 11px}
+.drop{display:block;width:100%;border:2px dashed var(--bd);border-radius:18px;padding:26px;text-align:center;cursor:pointer;transition:.2s;background:var(--cd)}.drop:hover,.drop.ov{border-color:var(--ac);background:#e8590c0d}.drop b{display:block}.drop span{color:var(--mu);font-size:13px}
+.row{display:flex;gap:14px;align-items:center;margin:16px 0}.thumb{width:64px;height:64px;border-radius:16px;background:var(--bd) center/cover;flex:none}
+.blk{margin-bottom:26px}.blk h3{font-size:18px;margin-bottom:10px;display:flex;gap:8px;align-items:center}.blk h3 .mono{font-size:11px;color:var(--mu);border:1px solid var(--bd);border-radius:99px;padding:1px 8px}
+.form{display:grid;gap:10px}.form label{font-size:12px;color:var(--mu);display:grid;gap:4px}
+input,textarea{width:100%;border:1px solid var(--bd);background:#fff;border-radius:10px;padding:8px 10px;outline:0;transition:.15s;resize:vertical}input:focus,textarea:focus{border-color:var(--ac);box-shadow:0 0 0 3px #e8590c22}
+.tw{overflow-x:auto;border:1px solid var(--bd);border-radius:14px;background:var(--cd)}table{border-collapse:collapse;width:100%}
+th{font:500 11px 'JetBrains Mono',monospace;color:var(--mu);text-align:left;padding:9px 8px;border-bottom:1px solid var(--bd);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+td{padding:6px;border-bottom:1px solid var(--bd);vertical-align:top;min-width:140px}tr:last-child td{border:0}td:last-child{min-width:0;width:34px}td textarea{field-sizing:content;min-height:38px;border-color:transparent;background:transparent}td textarea:focus,td textarea:hover{background:#fff;border-color:var(--bd)}
+.x{border:0;background:none;color:var(--mu);cursor:pointer;font-size:15px;padding:8px}.x:hover{color:#c92a2a}.add{margin-top:8px;border:1px dashed var(--bd);background:none;border-radius:10px;padding:7px 14px;cursor:pointer;color:var(--mu)}.add:hover{border-color:var(--ac);color:var(--ac)}
+.themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.th{border:2px solid transparent;border-radius:16px;padding:0;cursor:pointer;background:none;text-align:left;transition:.2s}.th:hover{transform:translateY(-3px)}.th.on{border-color:var(--ac)}
+.th span small{display:block;font:400 11px Inter,sans-serif;color:var(--mu);margin-top:2px}.sw{height:84px;border-radius:14px 14px 0 0;padding:12px;display:flex;flex-direction:column;justify-content:space-between;border:1px solid var(--bd);border-bottom:0}.sw b{font:600 20px Fraunces,serif}.sw i{height:6px;width:46%;border-radius:9px;display:block}.th span{display:block;padding:8px 12px;font-weight:500;background:var(--cd);border:1px solid var(--bd);border-radius:0 0 14px 14px}
+.score{display:flex;gap:18px;align-items:center;margin-bottom:18px}.ring{width:92px;height:92px;border-radius:50%;display:grid;place-items:center;flex:none;font:600 26px Fraunces,serif;position:relative;background:conic-gradient(var(--ac) calc(var(--p)*1%),var(--bd) 0)}.ring:before{content:'';position:absolute;inset:8px;border-radius:50%;background:var(--bg)}.ring span{position:relative}
+.sev{font:500 11px 'JetBrains Mono',monospace;padding:2px 9px;border-radius:99px;text-transform:uppercase}.high{background:#ffe3e3;color:#c92a2a}.medium{background:#fff0d6;color:#b25e09}.low{background:#e3f3e6;color:#2b8a3e}
+.rt td{min-width:110px;font-size:13px}.good{margin:0 0 18px;padding-left:18px;color:var(--mu)}
+.dep{display:grid;gap:10px;margin-top:18px}.dep a{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border:1px solid var(--bd);border-radius:14px;background:var(--cd);text-decoration:none;color:var(--ink);transition:.2s}.dep a:hover{border-color:var(--ac)}.dep.off a{opacity:.45;pointer-events:none}
+.done{margin-top:16px;padding:14px 16px;border-radius:14px;background:#e3f3e6;border:1px solid #b2dfbb;color:#1b5e2a}
+/* preview */
+.pvw{display:flex;flex-direction:column;min-height:0;background:#e9e3d6}.bar{display:flex;gap:10px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--bd);background:var(--bg)}.bar .sp{flex:1}
+.bar .seg button{border:1px solid var(--bd);background:var(--cd);padding:6px 12px;cursor:pointer}.seg button:first-child{border-radius:999px 0 0 999px}.seg button:last-child{border-radius:0 999px 999px 0}.seg button.on{background:var(--ink);color:#fff}
+.stage{flex:1;overflow:auto;padding:18px;display:flex;justify-content:center}#frame{width:100%;height:100%;background:#fff;border-radius:14px;box-shadow:0 10px 40px #0002;overflow:hidden;transition:width .35s ease;border:1px solid var(--bd)}#pv{width:100%;height:100%;border:0;display:block}
+.busy{position:fixed;inset:0;background:#f4efe6e8;backdrop-filter:blur(4px);display:grid;place-items:center;z-index:50}.busy div{text-align:center}.spin{width:46px;height:46px;border-radius:50%;border:4px solid var(--bd);border-top-color:var(--ac);animation:sp 0.8s linear infinite;margin:0 auto 14px}@keyframes sp{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 20px;border-radius:999px;z-index:60;animation:in .3s}
+@media(max-width:960px){.ws{grid-template-columns:1fr;height:auto}.side{border:0}.panels{overflow:visible}.pvw{height:80vh}}
+</style></head><body>
+<header class="top"><div class="logo"><img src="favicon.svg" alt="">2minfolio</div><div id="who"></div></header>
+
+<main id="land" class="land" hidden>
+  <span class="pill">Free · GitHub login · Your own repo</span>
+  <h1>Drop your resume. Get a portfolio that's <em>live</em>.</h1>
+  <p>Upload your CV, pick from 12 themes, preview it for real, and we push the code to a fresh GitHub repo. Deploy in one click.</p>
+  <a class="btn ac" href="/auth/login">Continue with GitHub →</a>
+  <div class="steps">
+    <div class="card"><b>01</b><h3>Upload</h3><p>Resume PDF and your photo. We read it with AI.</p></div>
+    <div class="card"><b>02</b><h3>Review</h3><p>Edit parsed data in tables and see what to improve.</p></div>
+    <div class="card"><b>03</b><h3>Theme</h3><p>Bento, brutalism, glass, hacker and more, live preview.</p></div>
+    <div class="card"><b>04</b><h3>Ship</h3><p>New repo with 3 files, then Vercel / Netlify / Pages.</p></div>
+  </div>
+</main>
+
+<main id="app" class="ws" hidden>
+  <section class="side">
+    <nav class="tabs" id="tabs"></nav>
+    <div class="panels">
+      <div class="panel on"><h2>Upload</h2><p class="sub">Your resume stays exactly as is and is what visitors download.</p>
+        <label class="drop" id="drop"><input type="file" id="cv" accept="application/pdf" hidden><b id="cvn">Drop resume PDF here</b><span>or click to browse (text-based PDF)</span></label>
+        <div class="row"><div class="thumb" id="thumb"></div><div><label class="btn o sm"><input type="file" id="img" accept="image/*" hidden>Upload photo</label><div class="sub" style="margin:6px 0 0;font-size:12px">Optional. Cropped square, kept inside the page.</div></div></div>
+        <button class="btn ac" id="go" style="width:100%;justify-content:center">Analyze with AI ✦</button>
+        <p class="sub mono" style="margin-top:14px;font-size:12px" id="sampleNote">Preview on the right shows a sample until you analyze your resume.</p></div>
+      <div class="panel"><h2>Your details</h2><p class="sub">Parsed from your resume. Edit any cell, the preview updates live.</p><div id="tables"></div></div>
+      <div class="panel"><h2>Pick a theme</h2><p class="sub">12 themes. Click to see it live.</p><div class="themes" id="themes"></div></div>
+      <div class="panel"><h2>Resume review</h2><p class="sub">Honest feedback to make your resume stronger.</p><div id="review"><p class="sub">Analyze your resume first.</p></div></div>
+      <div class="panel"><h2>Publish</h2><p class="sub">We create a new public repo on your GitHub with index.html, script.js and resume.pdf.</p>
+        <div class="form"><label>Repository name<input id="repo" value="portfolio"></label><label>Description<input id="desc" value="My portfolio website"></label></div>
+        <button class="btn ac" id="pub" style="width:100%;justify-content:center;margin-top:14px">Create repo &amp; push code</button>
+        <div id="res"></div>
+        <h3 style="margin:26px 0 0;font-size:18px">Deploy</h3><div class="dep off" id="dep"></div></div>
+    </div>
+  </section>
+  <section class="pvw">
+    <div class="bar"><span class="pill" id="pvl">Sample preview</span><span class="sp"></span>
+      <div class="seg" id="seg"><button class="on" data-w="100%">Desktop</button><button data-w="768px">Tablet</button><button data-w="390px">Mobile</button></div>
+      <button class="btn o sm" id="nt">Open ↗</button></div>
+    <div class="stage"><div id="frame"><iframe id="pv" title="Live preview"></iframe></div></div>
+  </section>
+</main>
+<script src="builder.js"></script><script src="app.js"></script>
+</body></html>
