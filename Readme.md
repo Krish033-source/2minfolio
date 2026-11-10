@@ -8,7 +8,7 @@
 
 Resume PDF → AI parsing → 12 themes → your own GitHub repo. In about **2 minutes**.
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-2minfolio.onrender.com-e8590c?style=for-the-badge)](https://2minfolio.onrender.com)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-2minfolio.onrender.com-e8590c?style=for-the-badge)](https://twominfolio.onrender.com)
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Flask-Backend-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
 [![Groq](https://img.shields.io/badge/AI-Groq_LLM-f55036?style=for-the-badge)](https://groq.com/)
