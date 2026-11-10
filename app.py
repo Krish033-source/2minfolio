@@ -123,12 +123,15 @@ def publish():
                json={"message": f"Add {name}", "content": b64})
         if p.status_code >= 300:
             return jsonify(error=f"Repo created but pushing {name} failed."), 502
-    pages = None
+    pages, perr = None, None
     pr = gh("POST", f"/repos/{user['login']}/{repo}/pages", tok,
-            json={"source": {"branch": info.get("default_branch", "main"), "path": "/"}})
-    if pr.status_code < 300:
+            json={"build_type": "legacy", "source": {"branch": "main", "path": "/"}})
+    if pr.status_code in (201, 409): 
+        gh("POST", f"/repos/{user['login']}/{repo}/pages/builds", tok)  # build trigger
         pages = f"https://{user['login']}.github.io/{repo}/"
-    return jsonify(repo_url=info["html_url"], pages=pages, files=[n for n, _ in files])
+    else:
+        perr = f"Pages enable nahi hua ({pr.status_code}). Repo Settings → Pages se on karo."
+    return jsonify(repo_url=info["html_url"], pages=pages, pages_error=perr, files=[n for n, _ in files])
 
 
 if __name__ == "__main__":
