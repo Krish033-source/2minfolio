@@ -41,7 +41,7 @@ def home():
 @app.get("/auth/login")
 def login():
     session["st"] = secrets.token_urlsafe(16)
-    q = f"client_id={CID}&scope=public_repo&state={session['st']}&redirect_uri={BASE}/auth/callback"
+    q = f"client_id={CID}&scope=repo&state={session['st']}&redirect_uri={BASE}/auth/callback"
     return redirect("https://github.com/login/oauth/authorize?" + q)
 
 
@@ -130,7 +130,7 @@ def publish():
         gh("POST", f"/repos/{user['login']}/{repo}/pages/builds", tok)  # build trigger
         pages = f"https://{user['login']}.github.io/{repo}/"
     else:
-        perr = f"Pages enable nahi hua ({pr.status_code}). Repo Settings → Pages se on karo."
+        perr = f"Pages not enabled ({pr.status_code}). Go Repo Settings → Pages on."
     return jsonify(repo_url=info["html_url"], pages=pages, pages_error=perr, files=[n for n, _ in files])
 
 
