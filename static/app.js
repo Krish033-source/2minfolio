@@ -100,12 +100,13 @@ async function publish() {
     $('#dep').classList.remove('off');
     $('#dep').innerHTML = `<a href="https://vercel.com/new/clone?repository-url=${u}" target="_blank"><span><b>Deploy to Vercel</b><br><small>Import repo, click Deploy. No build settings needed.</small></span>→</a>
 <a href="https://app.netlify.com/start/deploy?repository=${u}" target="_blank"><span><b>Deploy to Netlify</b><br><small>Connect GitHub and deploy.</small></span>→</a>
-${j.pages ? `<a href="${H(j.pages)}" target="_blank"><span><b>GitHub Pages</b><br><small>${H(j.pages)} (live in about a minute)</small></span>→</a>` : ''}`;
+${j.pages ? `<a href="${H(j.pages)}" target="_blank"><span><b>GitHub Pages</b><br><small>${H(j.pages)} (live in about a minute)</small></span>→</a>` : `<a href="${H(j.settings_url)}" target="_blank"><span><b>GitHub Pages: enable manually</b><br><small>${H(j.pages_error || '')} Open Settings → Pages → Deploy from a branch → main / (root) → Save.</small></span>→</a>`}`;
     $('#dep').scrollIntoView({ behavior: 'smooth' }); toast('Repo created 🎉');
   } catch (e) { toast(e.message); } finally { busy(false); }
 }
 function start() {
   $('#who').innerHTML = S.user ? `<div class="user"><img src="${H(S.user.avatar)}" alt=""><span>${H(S.user.login)}</span><a class="btn o sm" href="/auth/logout">Log out</a></div>` : `<a class="btn sm" href="/auth/login">Log in with GitHub</a>`;
+  if (S.user && !S.repoScope) $('#warn').innerHTML = '<div class="done" style="background:#fff0d6;border-color:#f0c36d;color:#7a4a09;margin:0 0 14px">GitHub Pages needs one more permission. <a href="/auth/logout">Log out</a>, then log in again and approve it.</div>';
   $('#land').hidden = !!S.user; $('#app').hidden = !S.user; if (!S.user) return;
   $('#tabs').innerHTML = STEPS.map((s, i) => `<button class="${i ? '' : 'on'}" data-s="${i}"><b>0${i + 1}</b>${s}</button>`).join('');
   S.data = norm(S.data); tables(); themes(); paint();
@@ -131,4 +132,4 @@ function start() {
     if (x) { const [k, i] = x.dataset.del.split(':'); S.data[k].splice(+i, 1); tables(); refresh(); }
   });
 }
-fetch('/api/me').then(r => r.json()).then(j => { S.user = j.user; start(); }).catch(start);
+fetch('/api/me').then(r => r.json()).then(j => { S.user = j.user; S.repoScope = j.repo_scope; start(); }).catch(start);
