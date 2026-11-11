@@ -1,6 +1,11 @@
-import os, io, re, json, base64, secrets, requests
+import os, io, re, json, time, base64, secrets, requests
 from flask import Flask, request, session, redirect, jsonify, send_from_directory
 from pypdf import PdfReader
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 app = Flask(__name__, static_folder="static", static_url_path="")
 app.secret_key = os.environ.get("SECRET_KEY", "dev-change-me")
@@ -54,8 +59,10 @@ def callback():
     tok = r.json().get("access_token")
     if not tok:
         return redirect("/?e=auth")
-    u = gh("GET", "/user", tok).json()
+    ur = gh("GET", "/user", tok)
+    u = ur.json()
     session["tok"] = tok
+    session["scopes"] = [x.strip() for x in ur.headers.get("X-OAuth-Scopes", "").split(",") if x.strip()]
     session["user"] = {"login": u.get("login"), "name": u.get("name") or u.get("login"), "avatar": u.get("avatar_url")}
     return redirect("/")
 
@@ -68,7 +75,7 @@ def logout():
 
 @app.get("/api/me")
 def me():
-    return jsonify(user=session.get("user"))
+    return jsonify(user=session.get("user"), repo_scope="repo" in session.get("scopes", []))
 
 
 @app.post("/api/parse")
@@ -123,15 +130,31 @@ def publish():
                json={"message": f"Add {name}", "content": b64})
         if p.status_code >= 300:
             return jsonify(error=f"Repo created but pushing {name} failed."), 502
-    pages, perr = None, None
-    pr = gh("POST", f"/repos/{user['login']}/{repo}/pages", tok,
-            json={"build_type": "legacy", "source": {"branch": "main", "path": "/"}})
-    if pr.status_code in (201, 409): 
-        gh("POST", f"/repos/{user['login']}/{repo}/pages/builds", tok)  # build trigger
-        pages = f"https://{user['login']}.github.io/{repo}/"
+    owner = user["login"]
+    br = gh("GET", f"/repos/{owner}/{repo}", tok)
+    branch = (br.json().get("default_branch") if br.status_code < 300 else None) or info.get("default_branch", "main")
+    pages, err = None, None
+    if "repo" not in session.get("scopes", []):
+        err = "Your GitHub login only has the 'public_repo' scope, but GitHub needs the 'repo' scope to enable Pages through the API. Log out and log in again."
     else:
-        perr = f"Pages not enabled ({pr.status_code}). Go Repo Settings → Pages on."
-    return jsonify(repo_url=info["html_url"], pages=pages, pages_error=perr, files=[n for n, _ in files])
+        for _ in range(4):
+            pr = gh("POST", f"/repos/{owner}/{repo}/pages", tok, json={"build_type": "legacy", "source": {"branch": branch, "path": "/"}})
+            if pr.status_code < 300 or pr.status_code == 409:
+                try:
+                    pages = pr.json().get("html_url")
+                except Exception:
+                    pages = None
+                pages = pages or f"https://{owner.lower()}.github.io/{repo}/"
+                err = None
+                break
+            try:
+                msg = pr.json().get("message", "")
+            except Exception:
+                msg = pr.text[:120]
+            err = f"GitHub replied {pr.status_code}: {msg}"
+            time.sleep(2)
+    return jsonify(repo_url=info["html_url"], pages=pages, pages_error=err,
+                   settings_url=f"{info['html_url']}/settings/pages", files=[n for n, _ in files])
 
 
 if __name__ == "__main__":
